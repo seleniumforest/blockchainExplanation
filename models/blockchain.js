@@ -1,7 +1,5 @@
 var Block = require("../models/block")
 var mineBlock = require("./miner")
-var sha256 = require('js-sha256').sha256;
-
 var DEFAULT_DIFFICULTY = 3;
 
 module.exports = class Blockchain {
@@ -18,18 +16,10 @@ module.exports = class Blockchain {
     }
 
     addBlock(transactions) {
-        let validTransactions = this.filterInvalidTransactions(transactions);
-        var lastBlock = this.blocks[this.blocks.length - 1];
-        var newBlock = new Block(lastBlock.height + 1, validTransactions, lastBlock.hash);
+        let validTransactions = transactions.filter(x => x.isValid());
+        let lastBlock = this.blocks[this.blocks.length - 1];
+        let newBlock = new Block(lastBlock.height + 1, validTransactions, lastBlock.hash);
         mineBlock(newBlock, this.difficulty);
         this.blocks.push(newBlock);
-    }
-
-    filterInvalidTransactions(transactions) {
-        return transactions.filter(t => {
-            let inputsSum = t.inputs.reduce((acc, cur) => acc + cur.amount, 0);
-            let outputsSum = t.outputs.reduce((acc, cur) => acc + cur.amount, 0);
-            return outputsSum === inputsSum;
-        });
     }
 }
