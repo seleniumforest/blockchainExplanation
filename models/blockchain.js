@@ -2,7 +2,7 @@ var Block = require("../models/block")
 var mineBlock = require("./miner")
 var sha256 = require('js-sha256').sha256;
 
-var DEFAULT_DIFFICULTY = 4;
+var DEFAULT_DIFFICULTY = 3;
 
 module.exports = class Blockchain {
     constructor() {
@@ -29,7 +29,7 @@ module.exports = class Blockchain {
         return transactions.filter(t => {
             let inputsSum = t.inputs.reduce((acc, cur) => acc + cur.amount, 0);
             let outputsSum = t.outputs.reduce((acc, cur) => acc + cur.amount, 0);
-            return outputsSum <= inputsSum;
+            return outputsSum === inputsSum;
         });
     }
 }
